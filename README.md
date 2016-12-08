@@ -10,8 +10,21 @@ devices, i.e. OpenWRT routers.
 
 For more details, [check here][Compare].
 
-ShadowVPN is currently beta and have much work to do. If you want a stable version, 
+ShadowVPN is currently beta and have much work to do. If you want a stable version,
 please come by here a few months later.
+
+## 说明
+
+```bash
+sudo ./tooles/chnroutes_osx.sh # osx
+sudo ./tooles/chnroutes.sh # linux
+
+curl http://www.ip.cn/
+
+# after stop vpn
+sudo ./tooles/chnroutes_osx.sh down # osx
+sudo ./tooles/chnroutes.sh down # linux
+```
 
 Install
 -------

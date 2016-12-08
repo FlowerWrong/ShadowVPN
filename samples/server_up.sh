@@ -12,6 +12,10 @@ ip addr add $net dev $intf
 ip link set $intf mtu $mtu
 ip link set $intf up
 
+# ssh
+iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp --sport 22 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+
 # turn on NAT over VPN
 if !(iptables-save -t nat | grep -q "shadowvpn"); then
   iptables -t nat -A POSTROUTING -s $net ! -d $net -m comment --comment "shadowvpn" -j MASQUERADE
