@@ -26,6 +26,29 @@ route add -net $remote_tun_ip $orig_gw -netmask 255.255.255.255
 echo default route changed to $remote_tun_ip
 
 # change dns server
-networksetup -setdnsservers Wi-Fi $dns_server
+services=$(networksetup -listnetworkserviceorder | grep 'Hardware Port')
+
+while read line; do
+    sname=$(echo $line | awk -F  "(, )|(: )|[)]" '{print $2}')
+    sdev=$(echo $line | awk -F  "(, )|(: )|[)]" '{print $4}')
+    # echo "Current service: $sname, $sdev, $currentservice"
+    if [ -n "$sdev" ]; then
+        ifconfig $sdev 2>/dev/null | grep 'status: active' > /dev/null 2>&1
+        rc="$?"
+        if [ "$rc" -eq 0 ]; then
+            currentservice="$sname"
+        fi
+    fi
+done <<< "$(echo "$services")"
+
+if [ -n $currentservice ]; then
+    echo "current service is $currentservice"
+    networksetup -getdnsservers $currentservice
+    networksetup -setdnsservers $currentservice $dns_server
+    echo "DNS has been seted to $dns_server"
+else
+    >&2 echo "Could not find current service"
+    exit 1
+fi
 
 echo $0 done
